@@ -6,6 +6,8 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -16,9 +18,15 @@ export class ProductLine {
   @Column()
   name: string;
 
+  @CreateDateColumn()
+  createdAt: string;
+
+  @DeleteDateColumn()
+  deletedAt: string;
+
   @ManyToOne(() => ProductType, (productType) => productType.productLines)
   productType: ProductType;
 
   @OneToMany(() => ProductSample, (productSample) => productSample.productLine)
-  productSamples: ProductSample[];
+  productSamples?: ProductSample[];
 }

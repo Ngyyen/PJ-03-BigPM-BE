@@ -32,17 +32,17 @@ export class ProductSample {
   deletedAt: string;
 
   @ManyToOne(() => ProductLine, (productLine) => productLine.productSamples)
-  productLine: ProductLine;
+  productLine?: ProductLine;
 
   @OneToMany(
     () => SupplierProduct,
     (supplierProduct) => supplierProduct.productSample,
   )
-  supplierProducts: SupplierProduct[];
+  supplierProducts?: SupplierProduct[];
 
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.productSample)
-  orderDetails: OrderDetail[];
+  orderDetails?: OrderDetail[];
 
   @OneToOne(() => Batch, (batch) => batch.productSample)
-  batch: Batch;
+  batch?: Batch;
 }

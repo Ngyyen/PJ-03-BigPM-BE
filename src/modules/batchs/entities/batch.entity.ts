@@ -4,7 +4,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   OneToOne,
   ManyToOne,
   JoinColumn,
@@ -19,21 +18,22 @@ export class Batch {
   inbound_price: number;
 
   @Column()
-  sell_price: string;
+  sell_price: number;
 
   @Column()
-  discount: string;
+  discount: number;
 
   @Column()
-  quantity: string;
+  quantity: number;
 
   @Column()
-  inbound_quantity: string;
+  inbound_quantity: number;
 
   @Column()
   expiredAt: Date;
 
   @ManyToOne(() => InboundReceipt, (inboundReceipt) => inboundReceipt.batchs)
+  @JoinColumn()
   inboundReceipt: InboundReceipt;
 
   @OneToOne(() => ProductSample, (productSample) => productSample.batch)

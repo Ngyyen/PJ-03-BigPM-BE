@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UnitsService } from './units.service';
 import { CreateUnitDto } from './dto/create-unit.dto';
 import { UpdateUnitDto } from './dto/update-unit.dto';
@@ -8,27 +19,34 @@ export class UnitsController {
   constructor(private readonly unitsService: UnitsService) {}
 
   @Post()
-  create(@Body() createUnitDto: CreateUnitDto) {
+  create(@Body(ValidationPipe) createUnitDto: CreateUnitDto) {
     return this.unitsService.create(createUnitDto);
   }
 
   @Get()
-  findAll() {
-    return this.unitsService.findAll();
+  findAll(
+    @Query() query: string,
+    @Query('current') current: string,
+    @Query('pageSize') pageSize: string,
+  ) {
+    return this.unitsService.findAll(query, +current, +pageSize);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.unitsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.unitsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUnitDto: UpdateUnitDto) {
-    return this.unitsService.update(+id, updateUnitDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUnitDto: UpdateUnitDto,
+  ) {
+    return this.unitsService.update(id, updateUnitDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.unitsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.unitsService.remove(id);
   }
 }

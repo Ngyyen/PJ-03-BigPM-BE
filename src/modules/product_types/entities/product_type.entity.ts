@@ -1,5 +1,12 @@
 import { ProductLine } from 'src/modules/product_lines/entities/product_line.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class ProductType {
@@ -9,6 +16,12 @@ export class ProductType {
   @Column()
   name: string;
 
+  @CreateDateColumn()
+  createdAt: string;
+
+  @DeleteDateColumn()
+  deletedAt: string;
+
   @OneToMany(() => ProductLine, (productLine) => productLine.productType)
-  productLines: ProductLine[];
+  productLines?: ProductLine[];
 }

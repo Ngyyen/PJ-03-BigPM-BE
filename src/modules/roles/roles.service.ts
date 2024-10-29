@@ -1,26 +1,73 @@
-import { Injectable } from '@nestjs/common';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateRoleGroupDto } from './dto/update-role-group.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
+import { Role } from './entities/role.entity';
+import aqp from 'api-query-params';
+import { GroupsService } from '../groups/groups.service';
 
 @Injectable()
 export class RolesService {
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  constructor(
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
+    private groupsServices: GroupsService,
+  ) {}
+
+  async findAll(query: string, current: number, pageSize: number) {
+    console.log(query);
+    console.log(current, pageSize);
+
+    const { filter, sort } = aqp(query);
+    console.log('filter', filter);
+    console.log('sort', sort);
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+    delete filter.current;
+    delete filter.pageSize;
+
+    const totalItems = await this.roleRepository.count(filter);
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const skip = (current - 1) * pageSize;
+
+    const options = {
+      where: {},
+      relations: [],
+      take: pageSize,
+      skip: skip,
+    };
+
+    const results = await this.roleRepository.find(options);
+
+    return {
+      meta: {
+        current,
+        pageSize,
+        pages: totalPages,
+        total: totalItems,
+      },
+      results,
+    };
   }
 
-  findAll() {
-    return `This action returns all roles`;
-  }
+  async assignRolesToGroup(id: number, updateRoleGroupDto: UpdateRoleGroupDto) {
+    const group = await this.groupsServices.findOne(id);
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
-  }
+    if (!group) {
+      throw new NotFoundException(`Không tìm thấy nhóm người dùng có id ${id}`);
+    }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
-  }
+    const roles = await this.roleRepository.findBy({
+      id: In(updateRoleGroupDto.roleIds),
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+    if (roles.length !== updateRoleGroupDto.roleIds.length) {
+      throw new NotFoundException(`Một số vai trò không tìm thấy`);
+    }
+
+    group.roles = roles;
+
+    return this.roleRepository.save(group);
   }
 }

@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateSupplierProductDto } from './create-supplier_product.dto';
+import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
 
-export class UpdateSupplierProductDto extends PartialType(CreateSupplierProductDto) {}
+export class UpdateSupplierProductDto {
+  @IsNotEmpty()
+  @IsArray()
+  productSampleIds: number[];
+}

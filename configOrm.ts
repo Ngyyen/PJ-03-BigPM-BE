@@ -1,7 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
-export const config: TypeOrmModuleOptions = {
+export const config: MysqlConnectionOptions = {
   type: 'mysql',
   host: 'localhost',
   port: 3306,

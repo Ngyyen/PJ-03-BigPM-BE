@@ -31,6 +31,9 @@ import { Role } from './modules/roles/entities/role.entity';
 import { SupplierProduct } from './modules/supplier_products/entities/supplier_product.entity';
 import { Supplier } from './modules/suppliers/entities/supplier.entity';
 import { Unit } from './modules/units/entities/unit.entity';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { TransformInterceptor } from './interceptors/transform.response.interceptor';
+import { AllExceptionsFilter } from './filters/exceptions.filter';
 
 @Module({
   imports: [
@@ -77,6 +80,20 @@ import { Unit } from './modules/units/entities/unit.entity';
     ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}
