@@ -34,6 +34,7 @@ import { Unit } from './modules/units/entities/unit.entity';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './interceptors/transform.response.interceptor';
 import { AllExceptionsFilter } from './filters/exceptions.filter';
+import { ProductUnitsModule } from './modules/product_units/product_units.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { AllExceptionsFilter } from './filters/exceptions.filter';
       Unit,
       User,
     ]),
+    ProductUnitsModule,
   ],
   controllers: [AppController],
   providers: [

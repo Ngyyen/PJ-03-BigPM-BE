@@ -3,14 +3,14 @@ import { OrderDetailsService } from './order_details.service';
 import { OrderDetailsController } from './order_details.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderDetail } from './entities/order_detail.entity';
-import { ProductSamplesModule } from '../product_samples/product_samples.module';
 import { OrdersModule } from '../orders/orders.module';
+import { ProductUnitsModule } from '../product_units/product_units.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrderDetail]),
     OrdersModule,
-    ProductSamplesModule,
+    ProductUnitsModule,
   ],
   controllers: [OrderDetailsController],
   providers: [OrderDetailsService],

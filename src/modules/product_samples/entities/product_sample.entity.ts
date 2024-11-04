@@ -1,7 +1,5 @@
-import { Batch } from 'src/modules/batchs/entities/batch.entity';
-import { OrderDetail } from 'src/modules/order_details/entities/order_detail.entity';
 import { ProductLine } from 'src/modules/product_lines/entities/product_line.entity';
-import { SupplierProduct } from 'src/modules/supplier_products/entities/supplier_product.entity';
+import { ProductUnit } from 'src/modules/product_units/entities/product_unit.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,8 +8,6 @@ import {
   DeleteDateColumn,
   CreateDateColumn,
   OneToMany,
-  OneToOne,
-  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -23,7 +19,7 @@ export class ProductSample {
   name: string;
 
   @Column()
-  image: string;
+  description: string;
 
   @CreateDateColumn()
   createdAt: string;
@@ -31,18 +27,9 @@ export class ProductSample {
   @DeleteDateColumn()
   deletedAt: string;
 
+  @OneToMany(() => ProductUnit, (productUnit) => productUnit.productSample)
+  productUnits?: ProductUnit[];
+
   @ManyToOne(() => ProductLine, (productLine) => productLine.productSamples)
   productLine?: ProductLine;
-
-  @OneToMany(
-    () => SupplierProduct,
-    (supplierProduct) => supplierProduct.productSample,
-  )
-  supplierProducts?: SupplierProduct[];
-
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.productSample)
-  orderDetails?: OrderDetail[];
-
-  @OneToOne(() => Batch, (batch) => batch.productSample)
-  batch?: Batch;
 }

@@ -12,7 +12,7 @@ export class CreateOrderDetailDto {
 export class OrderDetailDto {
   @IsNotEmpty()
   @IsNumber()
-  productSampleId: number;
+  productUnitId: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -22,5 +22,5 @@ export class OrderDetailDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  price: number;
+  current_price: number;
 }

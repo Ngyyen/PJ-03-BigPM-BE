@@ -29,7 +29,6 @@ export class BatchsController {
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
   ) {
-    console.log('>> query', query);
     return this.batchsService.findAll(query, +current, +pageSize);
   }
 

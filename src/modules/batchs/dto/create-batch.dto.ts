@@ -23,5 +23,5 @@ export class CreateBatchDto {
   inboundReceiptId: number;
 
   @IsNotEmpty()
-  productSampleId: number;
+  productUnitId: number;
 }

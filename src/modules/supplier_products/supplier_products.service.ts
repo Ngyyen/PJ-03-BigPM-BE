@@ -12,8 +12,8 @@ export class SupplierProductsService {
   constructor(
     @InjectRepository(SupplierProduct)
     private supplierProductRepository: Repository<SupplierProduct>,
-    private suppliersService: SuppliersService,
-    private productSamplesService: ProductSamplesService,
+    // private suppliersService: SuppliersService,
+    // private productSamplesService: ProductSamplesService,
   ) {}
 
   async findAll(query: string, current: number, pageSize: number) {
@@ -57,49 +57,49 @@ export class SupplierProductsService {
     };
   }
 
-  async update(
-    supplierId: number,
-    updateSupplierProductDto: UpdateSupplierProductDto,
-  ) {
-    const supplier = await this.suppliersService.findOne(supplierId);
-    if (!supplier) {
-      throw new NotFoundException('Không tìm thấy nhà cung cấp');
-    }
+  // async update(
+  //   supplierId: number,
+  //   updateSupplierProductDto: UpdateSupplierProductDto,
+  // ) {
+  //   const supplier = await this.suppliersService.findOne(supplierId);
+  //   if (!supplier) {
+  //     throw new NotFoundException('Không tìm thấy nhà cung cấp');
+  //   }
 
-    const productSampleIds = updateSupplierProductDto.productSampleIds;
-    await this.supplierProductRepository.update(
-      { supplierId },
-      { status: '0' },
-    );
+  //   const productSampleIds = updateSupplierProductDto.productSampleIds;
+  //   await this.supplierProductRepository.update(
+  //     { supplierId },
+  //     { status: '0' },
+  //   );
 
-    const supplierProducts = [];
+  //   const supplierProducts = [];
 
-    for (const productSampleId of productSampleIds) {
-      const productSample =
-        await this.productSamplesService.findOne(productSampleId);
-      if (!productSample) {
-        throw new NotFoundException(
-          `Không tìm thấy mẫu sản phẩm có id ${productSampleId}`,
-        );
-      }
+  //   for (const productSampleId of productSampleIds) {
+  //     const productSample =
+  //       await this.productSamplesService.findOne(productSampleId);
+  //     if (!productSample) {
+  //       throw new NotFoundException(
+  //         `Không tìm thấy mẫu sản phẩm có id ${productSampleId}`,
+  //       );
+  //     }
 
-      let supplierProduct = await this.supplierProductRepository.findOne({
-        where: { supplierId, productSampleId },
-      });
+  //     let supplierProduct = await this.supplierProductRepository.findOne({
+  //       where: { supplierId, productSampleId },
+  //     });
 
-      if (supplierProduct) {
-        supplierProduct.status = '1';
-      } else {
-        supplierProduct = new SupplierProduct();
-        supplierProduct.supplierId = supplierId;
-        supplierProduct.productSampleId = productSampleId;
-        supplierProduct.status = '1';
-      }
+  //     if (supplierProduct) {
+  //       supplierProduct.status = '1';
+  //     } else {
+  //       supplierProduct = new SupplierProduct();
+  //       supplierProduct.supplierId = supplierId;
+  //       supplierProduct.productSampleId = productSampleId;
+  //       supplierProduct.status = '1';
+  //     }
 
-      supplierProducts.push(supplierProduct);
-    }
+  //     supplierProducts.push(supplierProduct);
+  //   }
 
-    await this.supplierProductRepository.save(supplierProducts);
-    return supplierProducts;
-  }
+  //   await this.supplierProductRepository.save(supplierProducts);
+  //   return supplierProducts;
+  // }
 }

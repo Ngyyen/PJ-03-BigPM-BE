@@ -9,10 +9,11 @@ import { ProductSamplesModule } from '../product_samples/product_samples.module'
 @Module({
   imports: [
     TypeOrmModule.forFeature([SupplierProduct]),
-    SuppliersModule,
-    ProductSamplesModule,
+    // SuppliersModule,
+    // ProductSamplesModule,
   ],
   controllers: [SupplierProductsController],
   providers: [SupplierProductsService],
+  exports: [SupplierProductsService],
 })
 export class SupplierProductsModule {}

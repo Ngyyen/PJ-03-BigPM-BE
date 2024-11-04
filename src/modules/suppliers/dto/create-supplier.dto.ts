@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Optional } from '@nestjs/common';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateSupplierDto {
   @IsNotEmpty({ message: 'Tên nhà cung cấp không được bỏ trống' })
@@ -16,4 +17,8 @@ export class CreateSupplierDto {
   @IsNotEmpty({ message: 'Quốc gia không được bỏ trống' })
   @IsString({ message: 'Quốc gia phải là chuỗi ký tự' })
   country: string;
+
+  @Optional()
+  @IsArray()
+  productUnitIds: number[];
 }

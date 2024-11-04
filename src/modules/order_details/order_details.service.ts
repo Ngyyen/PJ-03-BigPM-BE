@@ -1,13 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDetailDto } from './dto/create-order_detail.dto';
-import { UpdateOrderDetailDto } from './dto/update-order_detail.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderDetail } from './entities/order_detail.entity';
-import { Order } from '../orders/entities/order.entity';
-import { ProductSample } from '../product_samples/entities/product_sample.entity';
-import { ProductSamplesService } from '../product_samples/product_samples.service';
 import { OrdersService } from '../orders/orders.service';
+import { ProductUnitsService } from '../product_units/product_units.service';
 
 @Injectable()
 export class OrderDetailsService {
@@ -15,30 +12,29 @@ export class OrderDetailsService {
     @InjectRepository(OrderDetail)
     private readonly orderDetailRepository: Repository<OrderDetail>,
     private readonly ordersService: OrdersService,
-    private readonly productSamplesService: ProductSamplesService,
+    private readonly productUnitsService: ProductUnitsService,
   ) {}
 
   async addProductsToOrder(createOrderDetailDto: CreateOrderDetailDto) {
-    const { orderId, details } = createOrderDetailDto;
+    const { orderId, details, ...rest } = createOrderDetailDto;
     const order = await this.ordersService.findOne(orderId);
     if (!order) {
       throw new NotFoundException(`Không tìm thấy đơn hàng với id ${orderId}`);
     }
     const orderDetails = [];
     for (const detail of details) {
-      const { productSampleId, quantity, price } = detail;
-      const productSample =
-        await this.productSamplesService.findOne(productSampleId);
-      if (!productSample) {
+      const { productUnitId, quantity, current_price } = detail;
+      const productUnit = await this.productUnitsService.findOne(productUnitId);
+      if (!productUnit) {
         throw new NotFoundException(
-          `Không tìm thấy mẫu sản phẩm với id ${productSampleId}`,
+          `Không tìm thấy mẫu sản phẩm với id ${productUnitId}`,
         );
       }
       const orderDetail = this.orderDetailRepository.create({
         order,
-        productSample,
+        productUnit,
         quantity,
-        price,
+        current_price,
       });
       orderDetails.push(orderDetail);
     }

@@ -9,15 +9,68 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Supplier } from './entities/supplier.entity';
 import { Repository } from 'typeorm';
 import aqp from 'api-query-params';
+import { UpdateSupplierProductDto } from '../supplier_products/dto/update-supplier_product.dto';
+import { SupplierProduct } from '../supplier_products/entities/supplier_product.entity';
+import { ProductSamplesService } from '../product_samples/product_samples.service';
+import { ProductUnitsService } from '../product_units/product_units.service';
 
 @Injectable()
 export class SuppliersService {
   constructor(
     @InjectRepository(Supplier)
     private supplierRepository: Repository<Supplier>,
+    @InjectRepository(SupplierProduct)
+    private supplierProductRepository: Repository<SupplierProduct>,
+    private productUnitsService: ProductUnitsService,
   ) {}
 
+  async updateSupplierProduct(
+    supplierId: number,
+    updateSupplierProductDto: UpdateSupplierProductDto,
+  ) {
+    const supplier = await this.findOne(supplierId);
+    if (!supplier) {
+      throw new NotFoundException('Không tìm thấy nhà cung cấp');
+    }
+
+    const productUnitIds = updateSupplierProductDto.productUnitIds;
+    await this.supplierProductRepository.update(
+      { supplierId },
+      { status: '0' },
+    );
+
+    const supplierProducts = [];
+
+    for (const productUnitId of productUnitIds) {
+      const productUnit = await this.productUnitsService.findOne(productUnitId);
+      if (!productUnit) {
+        throw new NotFoundException(
+          `Không tìm thấy mẫu sản phẩm có id ${productUnit}`,
+        );
+      }
+
+      let supplierProduct = await this.supplierProductRepository.findOne({
+        where: { supplierId, productUnit },
+      });
+
+      if (supplierProduct) {
+        supplierProduct.status = '1';
+      } else {
+        supplierProduct = new SupplierProduct();
+        supplierProduct.supplierId = supplierId;
+        supplierProduct.productUnitId = productUnitId;
+        supplierProduct.status = '1';
+      }
+
+      supplierProducts.push(supplierProduct);
+    }
+
+    await this.supplierProductRepository.save(supplierProducts);
+    return supplierProducts;
+  }
+
   async create(createSupplierDto: CreateSupplierDto) {
+    console.log('createSupplierDto', createSupplierDto);
     const existingSupplier = await this.supplierRepository.findOne({
       where: { name: createSupplierDto.name },
     });
@@ -25,9 +78,12 @@ export class SuppliersService {
     if (existingSupplier) {
       throw new ConflictException('Tên nhà cung cấp đã tồn tại');
     }
-
+    const productUnitIds = createSupplierDto.productUnitIds;
     const supplier = this.supplierRepository.create(createSupplierDto);
-    const savedSupplier = this.supplierRepository.save(supplier);
+    const newSupplier = await this.supplierRepository.save(supplier);
+    const savedSupplier = this.updateSupplierProduct(newSupplier.id, {
+      productUnitIds,
+    });
     return savedSupplier;
   }
 

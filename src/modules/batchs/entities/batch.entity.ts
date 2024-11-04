@@ -1,5 +1,5 @@
 import { InboundReceipt } from 'src/modules/inbound_receipt/entities/inbound_receipt.entity';
-import { ProductSample } from 'src/modules/product_samples/entities/product_sample.entity';
+import { ProductUnit } from 'src/modules/product_units/entities/product_unit.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -36,7 +36,7 @@ export class Batch {
   @JoinColumn()
   inboundReceipt: InboundReceipt;
 
-  @OneToOne(() => ProductSample, (productSample) => productSample.batch)
+  @OneToOne(() => ProductUnit, (productUnit) => productUnit.batch)
   @JoinColumn()
-  productSample: ProductSample;
+  productUnit: ProductUnit;
 }

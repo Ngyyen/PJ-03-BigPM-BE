@@ -26,14 +26,14 @@ export class SupplierProductsController {
     return this.supplierProductsService.findAll(query, +current, +pageSize);
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id', ParseIntPipe) supplierId: number,
-    @Body(ValidationPipe) updateSupplierProductDto: UpdateSupplierProductDto,
-  ) {
-    return await this.supplierProductsService.update(
-      supplierId,
-      updateSupplierProductDto,
-    );
-  }
+  // @Patch(':id')
+  // async update(
+  //   @Param('id', ParseIntPipe) supplierId: number,
+  //   @Body(ValidationPipe) updateSupplierProductDto: UpdateSupplierProductDto,
+  // ) {
+  //   return await this.supplierProductsService.update(
+  //     supplierId,
+  //     updateSupplierProductDto,
+  //   );
+  // }
 }

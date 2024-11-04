@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBatchDto } from './dto/create-batch.dto';
 import { UpdateBatchDto } from './dto/update-batch.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Batch } from './entities/batch.entity';
 import aqp from 'api-query-params';
 import { InboundReceiptService } from '../inbound_receipt/inbound_receipt.service';
-import { ProductSamplesService } from '../product_samples/product_samples.service';
+import { ProductUnitsService } from '../product_units/product_units.service';
 
 @Injectable()
 export class BatchsService {
@@ -18,11 +14,11 @@ export class BatchsService {
     @InjectRepository(Batch)
     private batchRepository: Repository<Batch>,
     private inboundReceiptService: InboundReceiptService,
-    private productSampleService: ProductSamplesService,
+    private productUnitsService: ProductUnitsService,
   ) {}
 
   async create(createBatchDto: CreateBatchDto) {
-    const { inboundReceiptId, productSampleId, ...rest } = createBatchDto;
+    const { inboundReceiptId, productUnitId, ...rest } = createBatchDto;
     const batch = this.batchRepository.create(rest);
 
     if (inboundReceiptId) {
@@ -34,13 +30,12 @@ export class BatchsService {
       batch.inboundReceipt = inboundReceipt;
     }
 
-    if (productSampleId) {
-      const productSample =
-        await this.productSampleService.findOne(productSampleId);
-      if (!productSample) {
+    if (productUnitId) {
+      const productUnit = await this.productUnitsService.findOne(productUnitId);
+      if (!productUnit) {
         throw new NotFoundException('Không tìm thấy mẫu sản phẩm');
       }
-      batch.productSample = productSample;
+      batch.productUnit = productUnit;
     }
     const savedBatch = this.batchRepository.save(batch);
     return savedBatch;
@@ -100,14 +95,14 @@ export class BatchsService {
     if (!batch) {
       throw new NotFoundException('Không tìm thấy lô hàng');
     }
-    if (updateBatchDto.productSampleId) {
-      const productSample = await this.productSampleService.findOne(
-        updateBatchDto.productSampleId,
+    if (updateBatchDto.productUnitId) {
+      const productUnit = await this.productUnitsService.findOne(
+        updateBatchDto.productUnitId,
       );
-      if (!productSample) {
+      if (!productUnit) {
         throw new NotFoundException('Không tìm thấy mẫu sản phẩm');
       }
-      batch.productSample = productSample;
+      batch.productUnit = productUnit;
     }
 
     if (updateBatchDto.inboundReceiptId) {

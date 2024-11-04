@@ -22,6 +22,7 @@ export class SuppliersController {
   @ResponseMessage('Tạo nhà cung cấp thành công')
   @Post()
   create(@Body(ValidationPipe) createSupplierDto: CreateSupplierDto) {
+    console.log('Tạo nhà cung cấp', createSupplierDto);
     return this.suppliersService.create(createSupplierDto);
   }
 

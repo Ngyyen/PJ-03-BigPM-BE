@@ -1,12 +1,6 @@
-import { ProductSample } from 'src/modules/product_samples/entities/product_sample.entity';
+import { ProductUnit } from 'src/modules/product_units/entities/product_unit.entity';
 import { Supplier } from 'src/modules/suppliers/entities/supplier.entity';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
 @Entity()
 export class SupplierProduct {
@@ -17,7 +11,7 @@ export class SupplierProduct {
   public supplierId: number;
 
   @Column()
-  public productSampleId: number;
+  public productUnitId: number;
 
   @Column()
   public status: string;
@@ -25,9 +19,6 @@ export class SupplierProduct {
   @ManyToOne(() => Supplier, (supplier) => supplier.supplierProducts)
   public supplier: Supplier;
 
-  @ManyToOne(
-    () => ProductSample,
-    (productSample) => productSample.supplierProducts,
-  )
-  public productSample: ProductSample;
+  @ManyToOne(() => ProductUnit, (productUnit) => productUnit.supplierProducts)
+  public productUnit: ProductUnit;
 }
