@@ -7,7 +7,7 @@ export const config: MysqlConnectionOptions = {
   port: 3306,
   username: 'root',
   password: 'Admin@123',
-  database: 'MART_MANAGEMENT',
+  database: 'PROJECT_MANAGEMENT',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: true,
 };

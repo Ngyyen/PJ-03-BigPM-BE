@@ -1,6 +1,9 @@
+import { Comment } from 'src/modules/comment/entities/comment.entity';
 import { Group } from 'src/modules/groups/entities/group.entity';
-import { InboundReceipt } from 'src/modules/inbound_receipt/entities/inbound_receipt.entity';
-import { Order } from 'src/modules/orders/entities/order.entity';
+import { JobPosition } from 'src/modules/job_position/entities/job_position.entity';
+import { OfficePosition } from 'src/modules/office_position/entities/office_position.entity';
+import { Project } from 'src/modules/project/entities/project.entity';
+import { Task } from 'src/modules/task/entities/task.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,6 +13,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity()
@@ -17,26 +21,38 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
+  @ManyToOne(() => Group, (group) => group.users)
+  @JoinColumn()
+  group: Group;
 
   @Column()
   username: string;
 
   @Column()
-  email: string;
-
-  @Column()
   password: string;
 
   @Column()
-  score: number;
+  avatar_image: string;
 
   @Column()
-  address: string;
+  name: string;
+
+  @Column()
+  email: string;
 
   @Column()
   phone: string;
+
+  @CreateDateColumn()
+  hire_date: Date;
+
+  @ManyToOne(() => OfficePosition, (officePosition) => officePosition.users)
+  @JoinColumn()
+  officePosition: OfficePosition;
+
+  @ManyToOne(() => JobPosition, (jobPosition) => jobPosition.users)
+  @JoinColumn()
+  jobPosition: JobPosition;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -44,16 +60,12 @@ export class User {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @ManyToOne(() => Group, (group) => group.users)
-  @JoinColumn()
-  group: Group;
+  @ManyToMany(() => Project, (project) => project.users)
+  projects: Project[];
 
-  @OneToMany(() => Order, (user) => user.customer)
-  customerOrders: Order[];
+  @ManyToMany(() => Task, (task) => task.users)
+  tasks: Task[];
 
-  @OneToMany(() => Order, (user) => user.staff)
-  staffOrders: Order[];
-
-  @OneToMany(() => InboundReceipt, (inboundReceipt) => inboundReceipt.staff)
-  inboundReceipts: InboundReceipt[];
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }

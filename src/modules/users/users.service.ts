@@ -29,7 +29,7 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const { name, username, email, password, score, phone, address } =
+    const { name, username, email, password, phone } =
       createUserDto;
 
     console.log('createUserDto', createUserDto);
@@ -52,9 +52,7 @@ export class UsersService {
       username,
       email,
       password: hashPassword,
-      score,
       phone,
-      address,
     });
     const group = await this.groupsService.findOne(+createUserDto.groupId);
     user.group = group;
